@@ -1,5 +1,5 @@
 from __future__ import annotations
-from consts import Piece
+from consts import Piece, Theatrics
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .board import Board
@@ -8,6 +8,7 @@ from createOffsetMap import QUEEN_OFFSET_MAP, ROOK_OFFSET_MAP, BISHOP_OFFSET_MAP
 
 board: Board = None
 white_move = True
+prev_move = None
 prev_clicked_square = None
 legal_moves = [
     (i, j) for i in range(64) for j in range(64)
@@ -127,7 +128,7 @@ def compute_all_legal_moves():
             if not piece_on(start + direction):
                 legal_moves.append((start, start + direction))
                 
-            if ((white_move and start//8 == 6) or (not white_move and start//8 == 1)) and not piece_on(start + direction*2):
+            if ((white_move and start//8 == 6) or (not white_move and start//8 == 1)) and not piece_on(start + direction) and not piece_on(start + direction*2):
                 legal_moves.append((start, start + direction*2))
 
             if (start%8 != 7) and piece_on(start + direction + 1) and not target_piece_color_is_correct(start + direction + 1):
@@ -136,21 +137,49 @@ def compute_all_legal_moves():
             if (start%8 != 0) and piece_on(start + direction - 1) and not target_piece_color_is_correct(start + direction - 1):
                 legal_moves.append((start, start + direction - 1))
 
+EMPTY_THEATRICS = tuple(Theatrics.none for _ in range(64))
+def _reset_theaatrics():
+    board.theatrics.clear()
+    board.theatrics.extend(EMPTY_THEATRICS)
+    if prev_move is not None:
+        board.theatrics[prev_move[0]] = Theatrics.highlight
+        board.theatrics[prev_move[1]] = Theatrics.highlight
+
+def _add_clicked_piece_theatrics():
+    if target_piece_color_is_correct(prev_clicked_square):
+        board.theatrics[prev_clicked_square] = Theatrics.target
+        for end in (j for i,j in legal_moves if i == prev_clicked_square):
+            board.theatrics[end] = Theatrics.marked
+
 def handle_click(loc):
-    global prev_clicked_square, white_move
+    global prev_clicked_square, white_move, prev_move
+
+    if prev_clicked_square == loc:
+        prev_clicked_square = None
+        _reset_theaatrics()
+        return False, True
 
     if prev_clicked_square is not None and target_piece_color_is_correct(prev_clicked_square):
-        if loc == prev_clicked_square:return False
         if (prev_clicked_square, loc) not in legal_moves:
-            prev_clicked_square = None
-            return False
+            _reset_theaatrics()
+            prev_clicked_square = loc
+            _add_clicked_piece_theatrics()
+            return False, True
 
+        
         board[prev_clicked_square], board[loc] = 0, board[prev_clicked_square]
+        prev_move = (prev_clicked_square, loc)
+        _reset_theaatrics()
+
+
         white_move = not white_move
         prev_clicked_square = None
         compute_all_legal_moves()
-        return True
+        return True, True
     else:
+        if prev_clicked_square is not None:
+            _reset_theaatrics()
         prev_clicked_square = loc
-        return False
+        _add_clicked_piece_theatrics()
+        return False, True
     

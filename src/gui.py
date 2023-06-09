@@ -1,7 +1,10 @@
 from collections import deque
 from asynch import asyncdef, Signal
-from typing import Generator
-from consts import EventTypes, Targets
+from typing import Generator, TYPE_CHECKING
+if TYPE_CHECKING:
+    from board import Board
+
+from consts import EventTypes, Targets, Theatrics
 import tkinter
 import consts
 
@@ -65,7 +68,7 @@ class ChezGui:
         self.title = title
         self.viewportOptions = viewportOptions
         
-        self.board = board
+        self.board: Board = board
         
         if board is None:
             raise Exception("Board is None boss")
@@ -100,10 +103,11 @@ class ChezGui:
         self.tkBoardContainer.place(anchor=tkinter.W, width=SQUARE_SIZE*8, height=SQUARE_SIZE*8, x=(self.viewportOptions['height'] - (8 * SQUARE_SIZE)) // 2, rely=0.5)
 
         self.tkSquares = [
-            tkinter.Label(self.tkBoardContainer,borderwidth=0, bg="#f0d9b5" if (i%2 if (i//8)%2 else not i%2) else "#b58863", fg="#000000") for i in range(64)
+            tkinter.Label(self.tkBoardContainer, borderwidth=0, fg="#000000") for _ in range(64)
         ]
 
         self.updateBoard()
+        self.updateTheatrics()
 
         for i, tkSquare in enumerate(self.tkSquares):
             tkSquare.place(width=SQUARE_SIZE, height=SQUARE_SIZE, x=(i % 8) * SQUARE_SIZE, y=(i//8) * SQUARE_SIZE)
@@ -121,9 +125,22 @@ class ChezGui:
 
     def updateBoard(self):
         for index, val in enumerate(self.board):
-            img = PIECE_IMAGES[val]
-            self.tkSquares[index].configure(image=img, text=f"{index}")
+            self.tkSquares[index].configure(
+                image=PIECE_IMAGES[val],
+                # text=f"{index}"
+            )
 
+    def updateTheatrics(self):
+        for index in range(64):
+            self.tkSquares[index].configure(
+                bg=\
+                    ("#f0d9b5" if (index%2 if (index//8)%2 else not index%2) else "#b58863") if self.board.theatrics[index] == Theatrics.none else \
+                    ("#cdd26a" if (index%2 if (index//8)%2 else not index%2) else "#aaa23a") if self.board.theatrics[index] == Theatrics.highlight else \
+                    ("#829769" if (index%2 if (index//8)%2 else not index%2) else "#646f40") if self.board.theatrics[index] == Theatrics.target else \
+                    ("#aeb187" if (index%2 if (index//8)%2 else not index%2) else "#84794e") if self.board.theatrics[index] == Theatrics.marked else \
+                    "#000000", # unreachable
+            )
+            
 
     @property
     def events(self) -> Generator[Event, None, None]:

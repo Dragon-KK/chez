@@ -12,7 +12,9 @@ class Board:
             Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  , Piece.WhitePawn  ,
             Piece.WhiteRook  , Piece.WhiteKnight, Piece.WhiteBishop, Piece.WhiteQueen , Piece.WhiteKing  , Piece.WhiteBishop, Piece.WhiteKnight, Piece.WhiteRook  ,
         ]
-        self.theatrics = [ ]
+        self.theatrics = [
+            Theatrics.none for _ in range(64)
+        ]
 
     def __getitem__(self, key):
         return self.core[key]

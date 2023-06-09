@@ -22,5 +22,6 @@ for event in chez.events:
         print("HANDLE THIS 2")
         continue
 
-    needToUpdate = handle_click(event.data)
-    if needToUpdate: chez.updateBoard()
+    needToUpdatePieces, needToUpdateTheatrics = handle_click(event.data)
+    if needToUpdateTheatrics: chez.updateTheatrics()
+    if needToUpdatePieces: chez.updateBoard()
