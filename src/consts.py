@@ -1,8 +1,12 @@
-BOARD = 0
-
 from enum import IntEnum, auto
 
+class Targets(IntEnum):
+    Board = auto()
+
+
 class Piece(IntEnum):
+    Empty = 0
+
     BlackPawn   = auto()
     BlackKnight = auto()
     BlackBishop = auto()

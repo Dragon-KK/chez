@@ -1,6 +1,7 @@
 from collections import deque
 from asynch import asyncdef, Signal
-from consts import Piece
+from typing import Generator
+from consts import EventTypes, Targets
 import tkinter
 import consts
 
@@ -48,9 +49,9 @@ def createViewportOptions(
 
 class Event:
     def __init__(self, target = None, type = None, data = None):
-        self.target = target
-        self.type = type
-        self.data = data
+        self.target: Targets = target
+        self.type: EventTypes = type
+        self.data: any = data
 
 
 class ChezGui:
@@ -73,7 +74,7 @@ class ChezGui:
         self._provide_events_signal = Signal()
 
     def registerSquareClickEvent(self, squareLoc, tkSquare):
-        tkSquare.bind("<Button-1>", lambda event: self.addEvent(Event(consts.BOARD, consts.EventTypes.click, squareLoc)))
+        tkSquare.bind("<Button-1>", lambda event: self.addEvent(Event(consts.Targets.Board, consts.EventTypes.click, squareLoc)))
 
     def addEvent(self, e):
         self._events.append(e)
@@ -121,11 +122,11 @@ class ChezGui:
     def updateBoard(self):
         for index, val in enumerate(self.board):
             img = PIECE_IMAGES[val]
-            self.tkSquares[index].configure(image=img)
+            self.tkSquares[index].configure(image=img, text=f"{index}")
 
 
     @property
-    def events(self):
+    def events(self) -> Generator[Event, None, None]:
         while True:
             if not self.isexecing: return
             

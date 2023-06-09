@@ -1,6 +1,6 @@
 from gui import ChezGui
 from board import Board
-from consts import BOARD, EventTypes
+from consts import Targets, EventTypes
 from logic import *
 
 board = Board()
@@ -14,7 +14,7 @@ init_logix(board)
 chez.exec()
 
 for event in chez.events:
-    if event.target != BOARD:
+    if event.target != Targets.Board:
         print("HANDLE THIS")
         continue
     
@@ -24,4 +24,3 @@ for event in chez.events:
 
     needToUpdate = handle_click(event.data)
     if needToUpdate: chez.updateBoard()
-
