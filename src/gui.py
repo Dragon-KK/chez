@@ -14,19 +14,21 @@ PIECE_IMAGES = [""]
 def loadImages():
     from PIL.Image import open
     from PIL.ImageTk import PhotoImage
+    from pathlib import Path
+    root = Path(__file__).parent.joinpath("assets").as_posix()
     PIECE_IMAGES.extend([
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\bK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(r"C:\Users\kaush\Google Drive\My Code\Python\chez\assets\wK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//wK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
     ])
 
 
@@ -127,7 +129,7 @@ class ChezGui:
         for index, val in enumerate(self.board):
             self.tkSquares[index].configure(
                 image=PIECE_IMAGES[val],
-                # text=f"{index}"
+                text=f"{index}"
             )
 
     def updateTheatrics(self):
