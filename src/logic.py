@@ -35,32 +35,75 @@ def target_piece_color_is_correct(loc):
             (not white_move and not piece_is_white(loc))
         )
 
-def king_is_checked_after_move(start, end, king_is_white):
+def king_is_checked_after_move(start, end2, king_is_white):
     """
     NOTE: Temporarily makes changes to the board
     """
     king_loc = -1
+    curr_end = board[end2]
+    board[end2], board[start] = board[start], Piece.Empty
+
     for i in range(64):
         if (king_is_white and board[i] == Piece.WhiteKing) or (not king_is_white and board[i] == Piece.BlackKing):
             king_loc = i
             break
-    if king_loc == -1:raise Exception("NO KING FOUND ON BOARD!")
+    if king_loc == -1: raise Exception("NO KING FOUND ON BOARD!")
 
-    king_is_checked = False
-
-    curr_end = board[end]
-    board[end], board[start] = board[start], Piece.Empty
 
     # Go bishops moves
+    for offset, max_end in BISHOP_OFFSET_MAP[king_loc]:
+        for end in range(king_loc + offset, max_end, offset):
+            if not piece_on(end):
+                continue
+
+            if king_is_white and (board[end] == Piece.BlackBishop or board[end] == Piece.BlackQueen) or \
+                    not king_is_white and (board[end] == Piece.WhiteBishop or board[end] == Piece.WhiteQueen):
+                board[start], board[end2] = board[end2], curr_end
+                return True
+            break
+
     # Go rooks moves
+    for offset, max_end in ROOK_OFFSET_MAP[king_loc]:
+        for end in range(king_loc + offset, max_end, offset):
+            if not piece_on(end):
+                continue
+            if king_is_white and (board[end] == Piece.BlackRook or board[end] == Piece.BlackQueen) or \
+                    not king_is_white and (board[end] == Piece.WhiteRook or board[end] == Piece.WhiteQueen):
+                board[start], board[end2] = board[end2], curr_end
+                return True
+            break
     # Go knights moves
-    
-    # Castling is little bit more wierd
+    for end in KNIGHT_MOVE_MAP[king_loc]:
+        if king_is_white and (board[end] == Piece.BlackKnight) or \
+                not king_is_white and (board[end] == Piece.WhiteKnight):
+            board[start], board[end2] = board[end2], curr_end
+            return True
+
+    # Go kings moves
+    for offset, max_end in QUEEN_OFFSET_MAP[king_loc]:
+        for end in range(king_loc + offset, max_end, offset):
+            if king_is_white and board[end] == Piece.BlackKing or not king_is_white and board[end] == Piece.WhiteKing:
+                board[start], board[end2] = board[end2], curr_end
+                return True
+            break
+
+    # Go pawns moves
+    direction = -8 if king_is_white else +8
+    if (king_loc % 8 != 7) and (board[king_loc + direction + 1] == Piece.WhitePawn and not king_is_white and king_loc + direction + 1 < 64 or \
+            board[king_loc + direction + 1] == Piece.BlackPawn and king_is_white and king_loc + direction + 1 >= 0):
+        board[start], board[end2] = board[end2], curr_end
+        return True
+    if (king_loc % 8 != 0) and (board[king_loc + direction - 1] == Piece.BlackPawn and king_is_white and king_loc + direction - 1 >= 0 or \
+            board[king_loc + direction - 1] == Piece.WhitePawn and not king_is_white and king_loc + direction - 1 < 64):
+        board[start], board[end2] = board[end2], curr_end
+        return True
+
+    # Castling is little bit more weird
 
     # revert the changes made
-    board[start], board[end] = board[end], curr_end
+    board[start], board[end2] = board[end2], curr_end
 
-    return king_is_checked
+    return False
 
     
 
@@ -70,44 +113,52 @@ def compute_all_legal_moves():
 
     # TODO! Invalidate moves if king is under check after making the move
     for start in range(64):        
-        if not target_piece_color_is_correct(start):continue
+        if not target_piece_color_is_correct(start): continue
         if board[start] in (Piece.WhiteBishop, Piece.BlackBishop):
             for offset, max_end in BISHOP_OFFSET_MAP[start]:
                 for end in range(start + offset, max_end, offset):
                     if not piece_on(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                         continue
                     if not target_piece_color_is_correct(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                     break
 
         elif board[start] in (Piece.WhiteRook, Piece.BlackRook):
             for offset, max_end in ROOK_OFFSET_MAP[start]:
                 for end in range(start + offset, max_end, offset):
                     if not piece_on(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                         continue
                     if not target_piece_color_is_correct(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                     break
 
         elif board[start] in (Piece.WhiteQueen, Piece.BlackQueen):
             for offset, max_end in QUEEN_OFFSET_MAP[start]:
                 for end in range(start + offset, max_end, offset):
                     if not piece_on(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                         continue
                     if not target_piece_color_is_correct(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                     break
 
         elif board[start] in (Piece.WhiteKnight, Piece.BlackKnight):
             for end in KNIGHT_MOVE_MAP[start]:
                 if not piece_on(end):
-                    legal_moves.append((start, end))
+                    if not king_is_checked_after_move(start, end, white_move):
+                        legal_moves.append((start, end))
                     continue
                 if not target_piece_color_is_correct(end):
-                    legal_moves.append((start, end))
+                    if not king_is_checked_after_move(start, end, white_move):
+                        legal_moves.append((start, end))
 
         elif board[start] in (Piece.WhiteKing, Piece.BlackKing):
             # TODO!
@@ -115,10 +166,12 @@ def compute_all_legal_moves():
             for offset, max_end in QUEEN_OFFSET_MAP[start]:
                 for end in range(start + offset, max_end, offset):
                     if not piece_on(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                         break # We can only move like one square at a time
                     if not target_piece_color_is_correct(end):
-                        legal_moves.append((start, end))
+                        if not king_is_checked_after_move(start, end, white_move):
+                            legal_moves.append((start, end))
                     break
 
         elif board[start] in (Piece.WhitePawn, Piece.BlackPawn):
@@ -126,16 +179,20 @@ def compute_all_legal_moves():
             # TODO! Need to check for empassant
             direction = -8 if white_move else +8
             if not piece_on(start + direction):
-                legal_moves.append((start, start + direction))
+                if not king_is_checked_after_move(start, start + direction, white_move):
+                    legal_moves.append((start, start + direction))
                 
             if ((white_move and start//8 == 6) or (not white_move and start//8 == 1)) and not piece_on(start + direction) and not piece_on(start + direction*2):
-                legal_moves.append((start, start + direction*2))
+                if not king_is_checked_after_move(start, start + direction*2, white_move):
+                    legal_moves.append((start, start + direction*2))
 
             if (start%8 != 7) and piece_on(start + direction + 1) and not target_piece_color_is_correct(start + direction + 1):
-                legal_moves.append((start, start + direction + 1))
+                if not king_is_checked_after_move(start, start + direction + 1, white_move):
+                    legal_moves.append((start, start + direction + 1))
 
             if (start%8 != 0) and piece_on(start + direction - 1) and not target_piece_color_is_correct(start + direction - 1):
-                legal_moves.append((start, start + direction - 1))
+                if not king_is_checked_after_move(start, start + direction - 1, white_move):
+                    legal_moves.append((start, start + direction - 1))
 
 EMPTY_THEATRICS = tuple(Theatrics.none for _ in range(64))
 def _reset_theaatrics():
