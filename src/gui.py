@@ -8,7 +8,7 @@ from consts import EventTypes, Targets, Theatrics
 import tkinter
 import consts
 
-SQUARE_SIZE = 63
+SQUARE_SIZE = 76
 
 PIECE_IMAGES = [""]
 def loadImages():
@@ -33,8 +33,8 @@ def loadImages():
 
 
 def createViewportOptions(
-    width = 1000,
-    height = 600
+    width = 1200,
+    height = 720
 ):
     """
     Provide the height and width of the viewport.
@@ -129,7 +129,7 @@ class ChezGui:
         for index, val in enumerate(self.board):
             self.tkSquares[index].configure(
                 image=PIECE_IMAGES[val],
-                text=f"{index}"
+                # text=f"{index}"
             )
 
     def updateTheatrics(self):

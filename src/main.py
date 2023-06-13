@@ -1,7 +1,13 @@
 from gui import ChezGui
 from board import Board
 from consts import Targets, EventTypes
-from logic import *
+from logic import init_logix, handle_click
+
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except:
+    print("COULD NOT SET DPI AWARENESS!")
 
 board = Board()
 
