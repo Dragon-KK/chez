@@ -181,22 +181,22 @@ def compute_all_legal_moves():
                         if not king_is_checked_after_move(start, end, white_move):
                             legal_moves.append((start, end))
                     break
-                if castlelongWhite == True and white_move:
-                    if board[57] == 0 and board[58] == 0 and board[59] == 0 and not king_is_checked_after_move(60,58,white_move) and not \
-                        king_is_checked_after_move(60,59,white_move) and not king_is_checked_after_move(60,60,white_move):
-                        legal_moves.append((60,58))                   
-                if castleshortWhite == True and white_move:
-                    if board[61] == 0 and board[62] == 0 and not king_is_checked_after_move(60,60,white_move) and not king_is_checked_after_move(60,61,white_move)\
-                        and not king_is_checked_after_move(60,62,white_move):
-                        legal_moves.append((60,62))
-                if castlelongBlack == True and not white_move:
-                    if board[1] == 0 and board[2] == 0 and board[3] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,3,white_move)\
-                        and not king_is_checked_after_move(4,2,white_move):
-                        legal_moves.append((4,2))
-                if castleshortBlack == True and not white_move:
-                    if board[5] == 0 and board[6] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,5,white_move) and \
-                        not king_is_checked_after_move(4,6,white_move):
-                        legal_moves.append((4,6))
+            if castlelongWhite == True and white_move:
+                if board[57] == 0 and board[58] == 0 and board[59] == 0 and not king_is_checked_after_move(60,58,white_move) and not \
+                    king_is_checked_after_move(60,59,white_move) and not king_is_checked_after_move(60,60,white_move):
+                    legal_moves.append((60,58))                   
+            if castleshortWhite == True and white_move:
+                if board[61] == 0 and board[62] == 0 and not king_is_checked_after_move(60,60,white_move) and not king_is_checked_after_move(60,61,white_move)\
+                    and not king_is_checked_after_move(60,62,white_move):
+                    legal_moves.append((60,62))
+            if castlelongBlack == True and not white_move:
+                if board[1] == 0 and board[2] == 0 and board[3] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,3,white_move)\
+                    and not king_is_checked_after_move(4,2,white_move):
+                    legal_moves.append((4,2))
+            if castleshortBlack == True and not white_move:
+                if board[5] == 0 and board[6] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,5,white_move) and \
+                    not king_is_checked_after_move(4,6,white_move):
+                    legal_moves.append((4,6))
 
         elif board[start] in (Piece.WhitePawn, Piece.BlackPawn):
             # TODO! Need to handle promotion
@@ -247,17 +247,17 @@ def handle_click(loc):
             _add_clicked_piece_theatrics()
             return False, True
         if board[prev_clicked_square] in (Piece.WhiteKing, Piece.BlackKing):
-            if (prev_clicked_square,loc) == (4,2) and castlelongBlack == True:
-                board[0],board[3] = board[3],board[0]
+            if castlelongBlack and (prev_clicked_square,loc) == (4,2):
+                board[0], board[3] = board[3], board[0]
                 castlelongBlack = castleshortBlack = False
-            elif (prev_clicked_square,loc) == (4,6) and castleshortBlack == True:
-                board[5],board[7] = board[7],board[5]
+            elif castleshortBlack and (prev_clicked_square,loc) == (4,6):
+                board[5], board[7] = board[7], board[5]
                 castleshortBlack = castlelongBlack = False
-            elif(prev_clicked_square,loc) == (60,58) and castlelongWhite == True:
-                board[56],board[59] = board[59],board[56]
+            elif castlelongWhite and (prev_clicked_square,loc) == (60,58):
+                board[56], board[59] = board[59], board[56]
                 castlelongWhite = castleshortWhite = False
-            elif(prev_clicked_square,loc) == (60,62) and castleshortWhite == True:
-                board[63],board[61] = board[61],board[63]
+            elif castleshortWhite and (prev_clicked_square,loc) == (60,62):
+                board[63], board[61] = board[61], board[63]
                 castleshortWhite = castlelongWhite = False
             elif board[prev_clicked_square] == Piece.WhiteKing:
                 castleshortWhite = castlelongWhite = False
