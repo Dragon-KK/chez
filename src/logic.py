@@ -14,6 +14,11 @@ legal_moves = [
     (i, j) for i in range(64) for j in range(64)
 ]
 
+#These variables only check the condition that castling should be the first move of the king and rook involved(other condition handled elsewhere)
+castlelongWhite = True
+castleshortWhite = True 
+castlelongBlack = True
+castleshortBlack = True 
 
 def init_logix(_board):
     global board
@@ -35,13 +40,16 @@ def target_piece_color_is_correct(loc):
             (not white_move and not piece_is_white(loc))
         )
 
+        
 def king_is_checked_after_move(start, end2, king_is_white):
     """
     NOTE: Temporarily makes changes to the board
     """
     king_loc = -1
     curr_end = board[end2]
-    board[end2], board[start] = board[start], Piece.Empty
+    #Start == end is used to check if king is in check currently(used in castling case)
+    if start != end2:
+        board[end2], board[start] = board[start], Piece.Empty
 
     for i in range(64):
         if (king_is_white and board[i] == Piece.WhiteKing) or (not king_is_white and board[i] == Piece.BlackKing):
@@ -173,6 +181,22 @@ def compute_all_legal_moves():
                         if not king_is_checked_after_move(start, end, white_move):
                             legal_moves.append((start, end))
                     break
+                if castlelongWhite == True and white_move:
+                    if board[57] == 0 and board[58] == 0 and board[59] == 0 and not king_is_checked_after_move(60,58,white_move) and not \
+                        king_is_checked_after_move(60,59,white_move) and not king_is_checked_after_move(60,60,white_move):
+                        legal_moves.append((60,58))                   
+                if castleshortWhite == True and white_move:
+                    if board[61] == 0 and board[62] == 0 and not king_is_checked_after_move(60,60,white_move) and not king_is_checked_after_move(60,61,white_move)\
+                        and not king_is_checked_after_move(60,62,white_move):
+                        legal_moves.append((60,62))
+                if castlelongBlack == True and not white_move:
+                    if board[1] == 0 and board[2] == 0 and board[3] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,3,white_move)\
+                        and not king_is_checked_after_move(4,2,white_move):
+                        legal_moves.append((4,2))
+                if castleshortBlack == True and not white_move:
+                    if board[5] == 0 and board[6] == 0 and not king_is_checked_after_move(4,4,white_move) and not king_is_checked_after_move(4,5,white_move) and \
+                        not king_is_checked_after_move(4,6,white_move):
+                        legal_moves.append((4,6))
 
         elif board[start] in (Piece.WhitePawn, Piece.BlackPawn):
             # TODO! Need to handle promotion
@@ -209,7 +233,7 @@ def _add_clicked_piece_theatrics():
             board.theatrics[end] = Theatrics.marked
 
 def handle_click(loc):
-    global prev_clicked_square, white_move, prev_move
+    global prev_clicked_square, white_move, prev_move,castlelongWhite,castleshortWhite,castlelongBlack,castleshortBlack
 
     if prev_clicked_square == loc:
         prev_clicked_square = None
@@ -222,6 +246,37 @@ def handle_click(loc):
             prev_clicked_square = loc
             _add_clicked_piece_theatrics()
             return False, True
+        if board[prev_clicked_square] in (Piece.WhiteKing, Piece.BlackKing):
+            if (prev_clicked_square,loc) == (4,2) and castlelongBlack == True:
+                board[0],board[3] = board[3],board[0]
+                castlelongBlack = castleshortBlack = False
+            elif (prev_clicked_square,loc) == (4,6) and castleshortBlack == True:
+                board[5],board[7] = board[7],board[5]
+                castleshortBlack = castlelongBlack = False
+            elif(prev_clicked_square,loc) == (60,58) and castlelongWhite == True:
+                board[56],board[59] = board[59],board[56]
+                castlelongWhite = castleshortWhite = False
+            elif(prev_clicked_square,loc) == (60,62) and castleshortWhite == True:
+                board[63],board[61] = board[61],board[63]
+                castleshortWhite = castlelongWhite = False
+            elif board[prev_clicked_square] == Piece.WhiteKing:
+                castleshortWhite = castlelongWhite = False
+            else:
+                castlelongBlack = castleshortBlack = False
+        if board[prev_clicked_square] == Piece.BlackRook:
+            if prev_clicked_square == 0:
+                castlelongBlack = False
+            if prev_clicked_square == 7:
+                castleshortBlack = False        
+        if board[prev_clicked_square] == Piece.WhiteRook:
+            if prev_clicked_square == 56:
+                castlelongWhite = False
+            if prev_clicked_square == 63:
+                castleshortWhite = False
+
+        
+            
+            
 
         
         board[prev_clicked_square], board[loc] = 0, board[prev_clicked_square]
