@@ -107,13 +107,6 @@ class ChezGui:
         bishop_button.pack(side=tkinter.LEFT, padx=10, pady=20)
         knight_button.pack(side=tkinter.LEFT, padx=10, pady=20)
 
-        
-
-        # queen_button.
-        # rook_button.
-        # bishop_button.
-        # knight_button.
-
         popup.grab_set()
         popup.wait_window()
 
