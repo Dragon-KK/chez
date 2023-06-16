@@ -1,16 +1,17 @@
+from __future__ import annotations
+
 from collections import deque
-from asynch import asyncdef, Signal
+from chez.general.asynch import Signal, asyncdef
+from chez.general.definitions import _Piece, Pieces, _Color
 from typing import Generator, TYPE_CHECKING
 if TYPE_CHECKING:
-    from board import Board
-
-from consts import EventTypes, Targets, Theatrics
+    from chez.general import Position
+from .consts import EventTypes, Targets, Theatrics
 import tkinter
-import consts
 
 SQUARE_SIZE = 76
 
-PIECE_IMAGES = [""]
+PIECE_IMAGES = ["", ""]
 def loadImages():
     from PIL.Image import open
     from PIL.ImageTk import PhotoImage
@@ -18,16 +19,16 @@ def loadImages():
     root = Path(__file__).parent.joinpath("assets").as_posix()
     PIECE_IMAGES.extend([
         PhotoImage(open(f"{root}//bP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(f"{root}//bN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(f"{root}//bB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(f"{root}//bR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(f"{root}//bQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
-        PhotoImage(open(f"{root}//bK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wP.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wN.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wB.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wR.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wQ.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
+        PhotoImage(open(f"{root}//bK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
         PhotoImage(open(f"{root}//wK.png").resize((SQUARE_SIZE, SQUARE_SIZE))),
     ])
 
@@ -58,28 +59,68 @@ class Event:
         self.type: EventTypes = type
         self.data: any = data
 
-
 class ChezGui:
     def __init__(self,
         title = "Chezz ;)",
         viewportOptions = createViewportOptions(),
-        board = None
+        position: Position = None,
+        theatrics: list[Theatrics] = None
     ):
         self.isexecing = False
 
         self.title = title
         self.viewportOptions = viewportOptions
         
-        self.board: Board = board
+        self.position = position
+        self.theatrics = theatrics
         
-        if board is None:
-            raise Exception("Board is None boss")
+        if position is None:
+            raise Exception("Position is None boss")
+        
+        if theatrics is None:
+            raise Exception("Theatrics is None boss")
+        
 
         self._events = deque()
         self._provide_events_signal = Signal()
 
+    def request_promotion_piece(self, color: _Color) -> _Piece | None:
+        import tkinter.messagebox
+        result = None
+        popup = tkinter.Toplevel()
+
+        frame = tkinter.Frame(popup, bg="#1e1e1e")
+        frame.place(relheight=1, relwidth=1, relx=0, rely=0)
+
+        def button_press(res):
+            nonlocal result
+            result = res
+            popup.destroy()
+
+        queen_button = tkinter.Button(popup, image=PIECE_IMAGES[color|Pieces.Queen], command=lambda:button_press(Pieces.Queen))
+        rook_button = tkinter.Button(popup, image=PIECE_IMAGES[color|Pieces.Rook], command=lambda:button_press(Pieces.Rook))
+        bishop_button = tkinter.Button(popup, image=PIECE_IMAGES[color|Pieces.Bishop], command=lambda:button_press(Pieces.Bishop))
+        knight_button = tkinter.Button(popup, image=PIECE_IMAGES[color|Pieces.Knight], command=lambda:button_press(Pieces.Knight))
+
+        queen_button.pack(side=tkinter.LEFT, padx=10, pady=20)
+        rook_button.pack(side=tkinter.LEFT, padx=10, pady=20)
+        bishop_button.pack(side=tkinter.LEFT, padx=10, pady=20)
+        knight_button.pack(side=tkinter.LEFT, padx=10, pady=20)
+
+        
+
+        # queen_button.
+        # rook_button.
+        # bishop_button.
+        # knight_button.
+
+        popup.grab_set()
+        popup.wait_window()
+
+        return result
+
     def registerSquareClickEvent(self, squareLoc, tkSquare):
-        tkSquare.bind("<Button-1>", lambda event: self.addEvent(Event(consts.Targets.Board, consts.EventTypes.click, squareLoc)))
+        tkSquare.bind("<Button-1>", lambda event: self.addEvent(Event(Targets.Board, EventTypes.click, squareLoc)))
 
     def addEvent(self, e):
         self._events.append(e)
@@ -126,9 +167,9 @@ class ChezGui:
         self.root.destroy()
 
     def updateBoard(self):
-        for index, val in enumerate(self.board):
+        for index, val in enumerate(self.position):
             self.tkSquares[index].configure(
-                image=PIECE_IMAGES[val],
+                image=PIECE_IMAGES[val >> 1 - 1],
                 # text=f"{index}"
             )
 
@@ -136,10 +177,10 @@ class ChezGui:
         for index in range(64):
             self.tkSquares[index].configure(
                 bg=\
-                    ("#f0d9b5" if (index%2 if (index//8)%2 else not index%2) else "#b58863") if self.board.theatrics[index] == Theatrics.none else \
-                    ("#cdd26a" if (index%2 if (index//8)%2 else not index%2) else "#aaa23a") if self.board.theatrics[index] == Theatrics.highlight else \
-                    ("#829769" if (index%2 if (index//8)%2 else not index%2) else "#646f40") if self.board.theatrics[index] == Theatrics.target else \
-                    ("#aeb187" if (index%2 if (index//8)%2 else not index%2) else "#84794e") if self.board.theatrics[index] == Theatrics.marked else \
+                    ("#f0d9b5" if (index%2 if (index//8)%2 else not index%2) else "#b58863") if self.theatrics[index] == Theatrics.none else \
+                    ("#cdd26a" if (index%2 if (index//8)%2 else not index%2) else "#aaa23a") if self.theatrics[index] == Theatrics.highlight else \
+                    ("#829769" if (index%2 if (index//8)%2 else not index%2) else "#646f40") if self.theatrics[index] == Theatrics.target else \
+                    ("#aeb187" if (index%2 if (index//8)%2 else not index%2) else "#84794e") if self.theatrics[index] == Theatrics.marked else \
                     "#000000", # unreachable
             )
             
