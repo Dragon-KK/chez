@@ -88,6 +88,8 @@ class ChezGui:
         import tkinter.messagebox
         result = None
         popup = tkinter.Toplevel()
+        popup.title("Choose piece for promotion")
+        popup.resizable(False, False)
 
         frame = tkinter.Frame(popup, bg="#1e1e1e")
         frame.place(relheight=1, relwidth=1, relx=0, rely=0)
