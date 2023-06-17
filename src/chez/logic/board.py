@@ -81,8 +81,8 @@ class Board:
         """
         color_is_white = color_is_white if color_is_white is not None else self.is_white_move
         return self.piece_is_on(square) and (
-                (self.is_white_move and self.piece_color_on(square) == Colors.White) or 
-                (not self.is_white_move and self.piece_color_on(square) == Colors.Black)
+                (color_is_white and self.piece_color_on(square) == Colors.White) or 
+                (not color_is_white and self.piece_color_on(square) == Colors.Black)
             )
 
     def piece_is_on(self, square: Square) -> bool:
