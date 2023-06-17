@@ -155,28 +155,28 @@ class Board:
                             not self.king_is_checked(self.is_white_move) and \
                             self.king_is_not_checked_after_move(60, 59, self.is_white_move) and \
                             self.king_is_not_checked_after_move(60, 58, self.is_white_move):
-                        self.legal_moves.append((60,58))                 , None  
+                        self.legal_moves.append((60, 58, None))
                 if self.white_can_castle_short and self.is_white_move:
                     if self.piece_on(60) == Pieces.King and \
                             not self.piece_is_on(61) and not self.piece_is_on(62) and \
                             not self.king_is_checked(self.is_white_move) and \
                             self.king_is_not_checked_after_move(60, 61, self.is_white_move) and \
                             self.king_is_not_checked_after_move(60, 62, self.is_white_move):
-                        self.legal_moves.append((60,62, None))
+                        self.legal_moves.append((60, 62, None))
                 if self.black_can_castle_long and not self.is_white_move:
                     if self.piece_on(4) == Pieces.King and \
                             not self.piece_is_on(1) and not self.piece_is_on(2) and not self.piece_is_on(3) and \
                             not self.king_is_checked(self.is_white_move) and \
                             self.king_is_not_checked_after_move(4, 3, self.is_white_move) and \
                             self.king_is_not_checked_after_move(4, 2, self.is_white_move):
-                        self.legal_moves.append((4,2, None))
+                        self.legal_moves.append((4, 2, None))
                 if self.black_can_castle_short and not self.is_white_move:
                     if self.piece_on(4) == Pieces.King and \
                             not self.piece_is_on(5) and not self.piece_is_on(6) and \
                             not self.king_is_checked(self.is_white_move) and \
                             self.king_is_not_checked_after_move(4, 5, self.is_white_move) and \
                             self.king_is_not_checked_after_move(4, 6, self.is_white_move):
-                        self.legal_moves.append((4,6, None))
+                        self.legal_moves.append((4, 6, None))
 
             elif self.piece_on(possible_start) == Pieces.Knight:
                 for end in KNIGHT_MOVE_MAP[possible_start]:
