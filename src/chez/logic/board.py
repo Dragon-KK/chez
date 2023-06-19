@@ -30,8 +30,8 @@ class Board:
             Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  ,
             Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty ,
             Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty ,
-            Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty ,
-            Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty , Colors.White|Pieces.Empty ,
+            Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty ,
+            Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty ,
             Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  ,
             Colors.White|Pieces.Rook  , Colors.White|Pieces.Knight, Colors.White|Pieces.Bishop, Colors.White|Pieces.Queen , Colors.White|Pieces.King  , Colors.White|Pieces.Bishop, Colors.White|Pieces.Knight, Colors.White|Pieces.Rook  ,
         ]

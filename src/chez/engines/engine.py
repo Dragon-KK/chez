@@ -49,13 +49,13 @@ class Engine:
         while self.is_running:
             if self.cancellation_token is not None:
                 self.depth += 1
-                self.evaluate(self.cancellation_token)
+                self.evaluate(self.depth, self.cancellation_token)
             else:
                 self.begin_evaluation_signal.clear()
                 self.begin_evaluation_signal.wait()
 
     @abstractclassmethod
-    def evaluate(self, cancellation_token: CancellationToken):
+    def evaluate(self, depth: int,  cancellation_token: CancellationToken):
         """
         Evaluates the given board
         NOTE: When the board is updated the cancellation_token is exptected to be cancelled)
