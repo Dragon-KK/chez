@@ -58,6 +58,6 @@ class Engine:
     def evaluate(self, depth: int,  cancellation_token: CancellationToken):
         """
         Evaluates the given board
-        NOTE: When the board is updated the cancellation_token is exptected to be cancelled)
+        NOTE: When the board is updated the cancellation_token is expected to be cancelled)
         NOTE: The depth is incremented automatically whenever an evaluation finishes
         """
