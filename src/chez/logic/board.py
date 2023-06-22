@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from chez.general.definitions import Position, Pieces, Colors, Square, _Piece, _ColoredPiece, _Color, Move
 from .offsetMaps import BISHOP_OFFSET_MAP, ROOK_OFFSET_MAP, QUEEN_OFFSET_MAP, KNIGHT_MOVE_MAP
 
@@ -13,7 +15,7 @@ class TemporaryMoveCreator:
     def __enter__(self, *_):
         if self.move is None:
             raise Exception("Move is not set, temporary move cannot be made")
-
+        
         self.currEnd = self.position[self.move[1]]
         self.position[self.move[1]] = self.position[self.move[0]]
         self.position[self.move[0]] = Pieces.Empty
@@ -24,7 +26,18 @@ class TemporaryMoveCreator:
         self.move = None
 
 class Board:
-    def __init__(self) -> None:
+    def __init__(
+            self,
+            position: Position = None,
+            is_white_move: bool = None,
+            legal_moves: list[Move] = None,
+            prev_move: tuple[Square, Square] = None,
+            white_can_castle_short: bool = None,
+            white_can_castle_long: bool = None,
+            black_can_castle_short: bool = None,
+            black_can_castle_long: bool = None
+
+        ) -> None:
         self.position: Position = [
             Colors.Black|Pieces.Rook  , Colors.Black|Pieces.Knight, Colors.Black|Pieces.Bishop, Colors.Black|Pieces.Queen , Colors.Black|Pieces.King  , Colors.Black|Pieces.Bishop, Colors.Black|Pieces.Knight, Colors.Black|Pieces.Rook  ,
             Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  , Colors.Black|Pieces.Pawn  ,
@@ -34,24 +47,24 @@ class Board:
             Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty , Colors.Black|Pieces.Empty ,
             Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  , Colors.White|Pieces.Pawn  ,
             Colors.White|Pieces.Rook  , Colors.White|Pieces.Knight, Colors.White|Pieces.Bishop, Colors.White|Pieces.Queen , Colors.White|Pieces.King  , Colors.White|Pieces.Bishop, Colors.White|Pieces.Knight, Colors.White|Pieces.Rook  ,
-        ]
+        ] if position is None else position
 
         self._temporary_move_creator = TemporaryMoveCreator(self.position)
 
-        self.is_white_move = True
+        self.is_white_move = True if is_white_move is None else is_white_move
         """Set to true if it is currently white's turn"""
-        self.legal_moves: list[Move] = []
+        self.legal_moves: list[Move] = [] if legal_moves is None else legal_moves
         """List of all legal moves at the current state of the board"""
-        self.prev_move: tuple[Square, Square] = None
+        self.prev_move: tuple[Square, Square] = None if prev_move is None else prev_move
         """Keeps track of the last move made (for en passant)"""
 
-        self.white_can_castle_short = True
+        self.white_can_castle_short = True if white_can_castle_short is None else white_can_castle_short
         """Set to true if white can castle kingside"""
-        self.white_can_castle_long = True
+        self.white_can_castle_long = True if white_can_castle_long is None else white_can_castle_long
         """Set to true if white can castle queenside"""
-        self.black_can_castle_short = True
+        self.black_can_castle_short = True if black_can_castle_short is None else black_can_castle_short
         """Set to true if black can castle kingside"""
-        self.black_can_castle_long = True
+        self.black_can_castle_long = True if black_can_castle_long is None else black_can_castle_long
         """Set to true if black can castle queenside"""
 
     def _temporary_move(self, start, end):
@@ -283,6 +296,7 @@ class Board:
         with self._temporary_move(start, end):
             return not self.king_is_checked(king_is_white)
 
+
     def make_move(self, move: Move):
         start, end, promotion_piece = move
 
@@ -320,3 +334,19 @@ class Board:
         # promotion check
         if promotion_piece is not None:
             self.position[end] = self.piece_color_on(end)|promotion_piece
+
+    def is_checkmated(self):
+        return not self.legal_moves and self.king_is_checked(self.is_white_move)
+
+
+    def copy(self) -> Board:
+        return Board(
+            position=self.position.copy(),
+            legal_moves=self.legal_moves.copy(),
+            prev_move=self.prev_move,
+            is_white_move=self.is_white_move,
+            black_can_castle_long=self.black_can_castle_long,
+            black_can_castle_short=self.black_can_castle_short,
+            white_can_castle_long=self.white_can_castle_long,
+            white_can_castle_short=self.white_can_castle_short,
+        )

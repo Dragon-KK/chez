@@ -34,7 +34,7 @@ class Engine:
 
     def update_board(self, board: Board):
         """Updates the root board"""
-        # self.board = Board.copy()
+        self.board = board.copy()
 
     def begin_evaluation(self):
         """Begins the evaluation from the root board and current depth"""
