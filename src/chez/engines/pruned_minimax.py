@@ -23,7 +23,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
+                curr_eval = self.minimax(tmp_board, depth, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 if curr_eval > best_eval:
                     best_eval = curr_eval
@@ -34,7 +34,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
+                curr_eval = self.minimax(tmp_board, depth, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 if curr_eval < best_eval:
                     best_eval = curr_eval
