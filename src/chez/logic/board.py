@@ -2,7 +2,20 @@ from __future__ import annotations
 
 from chez.general.definitions import Position, Pieces, Colors, Square, _Piece, _ColoredPiece, _Color, Move
 from .offsetMaps import BISHOP_OFFSET_MAP, ROOK_OFFSET_MAP, QUEEN_OFFSET_MAP, KNIGHT_MOVE_MAP
+from functools import wraps
+import time
 
+
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
+        return result
+    return timeit_wrapper
 class TemporaryMoveCreator:
     def __init__(self, position: Position) -> None:
         self.position = position
@@ -102,6 +115,7 @@ class Board:
         """Returns true if a piece is present on the square"""
         return self.piece_on(square) != Pieces.Empty
     
+    @timeit
     def compute_all_legal_moves(self):
         """Updates the current legal moves from the given state of the board"""
         self.legal_moves.clear()

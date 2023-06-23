@@ -10,7 +10,7 @@ ct = CancellationToken()
 
 # TODO! Investigate the lag that occurs whenever a move is made
 # It is prolly due to calculation of all legal moves
-
+DEPTH = 2
 
 try:
     from ctypes import windll
@@ -31,7 +31,7 @@ board.compute_all_legal_moves()
 
 engine.update_board(board)
 # engine.begin_evaluation()
-engine.evaluate(2, ct)
+engine.evaluate(DEPTH, ct)
 
 EMPTY_THEATRICS = tuple(Theatrics.none for _ in range(64))
 def _reset_theatrics():
@@ -84,13 +84,13 @@ def handle_click(square: Square):
             board.compute_all_legal_moves()
             # engine.abort()
             engine.update_board(board)
-            engine.evaluate(2, ct)
+            engine.evaluate(DEPTH, ct)
         else:
             board.make_move((prev_clicked_square, square, None))
             board.compute_all_legal_moves()
             # engine.abort()
             engine.update_board(board)
-            engine.evaluate(2, ct)
+            engine.evaluate(DEPTH, ct)
 
         
         prev_clicked_square = None
