@@ -8,7 +8,7 @@ from functools import lru_cache
 from .engine import Engine, CancellationToken
 from .evaluators import naive_evaluate
 
-INF = float("inf")
+INF = float("-inf")
 
 class PrunedMinimaxEngine(Engine):
     def get_static_evaluation(self, board: Board):
@@ -23,7 +23,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(tmp_board, depth, -INF, INF, cancellation_token)
+                curr_eval = self.minimax(self.board, depth, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 if curr_eval > best_eval:
                     best_eval = curr_eval
@@ -34,7 +34,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(tmp_board, depth, -INF, INF, cancellation_token)
+                curr_eval = self.minimax(self.board, depth, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 if curr_eval < best_eval:
                     best_eval = curr_eval
@@ -45,7 +45,6 @@ class PrunedMinimaxEngine(Engine):
     # @lru_cache(None)
     def minimax(self, curr_board: Board, depth: int, alpha: float, beta: float, cancellation_token: CancellationToken):
         """Refer to https://www.youtube.com/watch?v=l-hh51ncgDI&t=531s"""
-        # TODO! FIX THIS SHIT
         if cancellation_token.cancelled:return
         if curr_board.is_checkmated():
             return -INF if curr_board.is_white_move else INF # If white was checkmated black is winning
@@ -58,7 +57,7 @@ class PrunedMinimaxEngine(Engine):
         if curr_board.is_white_move: # We need to maximize white
             max_eval = -INF
             for move in curr_board.legal_moves:
-                tmp_board = curr_board.copy()
+                tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
                 
@@ -73,7 +72,7 @@ class PrunedMinimaxEngine(Engine):
         else: # Maximize black == Minimize white
             min_eval = INF
             for move in curr_board.legal_moves:
-                tmp_board = curr_board.copy()
+                tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
 
