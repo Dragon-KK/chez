@@ -28,6 +28,7 @@ class PrunedMinimaxEngine(Engine):
                 if curr_eval > best_eval:
                     best_eval = curr_eval
                     best_move = move
+                
         else:
             best_eval = INF
             for move in self.board.legal_moves:
@@ -36,10 +37,11 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board.compute_all_legal_moves()
                 curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
+                # print(curr_eval, move, best_eval)
                 if curr_eval < best_eval:
                     best_eval = curr_eval
                     best_move = move
-        print(depth, best_move, best_eval)
+        print(depth, best_move, best_eval, self.board.legal_moves)
 
     
     # @lru_cache(None)
@@ -54,6 +56,7 @@ class PrunedMinimaxEngine(Engine):
 
         if depth == 0:
             return self.get_static_evaluation(curr_board)
+            
 
         if curr_board.is_white_move: # We need to maximize white
             max_eval = -INF

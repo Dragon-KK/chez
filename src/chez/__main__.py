@@ -57,6 +57,9 @@ chez = ChezGui(
 
 chez.exec()
 
+engine.update_board(board)
+engine.begin_evaluation()
+
 def handle_click(square: Square):
     global prev_clicked_square
 
