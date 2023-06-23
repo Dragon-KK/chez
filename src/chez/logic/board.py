@@ -248,7 +248,9 @@ class Board:
             if (king_is_white and self.position[i] == Colors.White|Pieces.King) or (not king_is_white and self.position[i] == Colors.Black|Pieces.King):
                 king_loc = i
                 break
-        if king_loc == -1: raise Exception("NO KING FOUND ON BOARD!")
+        if king_loc == -1:
+            print(self.position)
+            raise Exception("NO KING FOUND ON BOARD!")
 
         # Go bishops moves
         for offset, max_end in BISHOP_OFFSET_MAP[king_loc]:

@@ -162,10 +162,11 @@ class ChezGui:
         self.root.destroy()
 
     def updateBoard(self):
+        # self.position = [8, 4, 6, 10, 12, 6, 4, 8, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 3, 3, 3, 3, 9, 5, 7, 11, 3, 7, 5, 9]
         for index, val in enumerate(self.position):
             self.tkSquares[index].configure(
                 image=PIECE_IMAGES[val >> 1 - 1],
-                # text=f"{index}"
+                text=f"{index}"
             )
 
     def updateTheatrics(self):
