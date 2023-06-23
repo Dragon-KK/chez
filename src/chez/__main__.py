@@ -4,10 +4,13 @@ from .general import Square
 from .gui.consts import Targets, EventTypes, Theatrics
 from .general import Pieces, Colors
 from .engines import PrunedMinimaxEngine
+from .engines.engine import CancellationToken
+
+ct = CancellationToken()
 
 # TODO! Investigate the lag that occurs whenever a move is made
 # It is prolly due to calculation of all legal moves
-
+DEPTH = 2
 
 try:
     from ctypes import windll
@@ -22,9 +25,13 @@ board = Board()
 theatrics: list[Theatrics] = []
 
 engine = PrunedMinimaxEngine()
-engine.start()
+# engine.start()
 
 board.compute_all_legal_moves()
+
+engine.update_board(board)
+# engine.begin_evaluation()
+engine.evaluate(DEPTH, ct)
 
 EMPTY_THEATRICS = tuple(Theatrics.none for _ in range(64))
 def _reset_theatrics():
@@ -77,19 +84,18 @@ def handle_click(square: Square):
                 _add_clicked_piece_theatrics()
                 return False, True
             board.make_move((prev_clicked_square, square, piece))
-            
-            engine.abort()
+            board.compute_all_legal_moves()
+            # engine.abort()
             engine.update_board(board)
-            engine.begin_evaluation()
+            engine.evaluate(DEPTH, ct)
         else:
             board.make_move((prev_clicked_square, square, None))
-
-            engine.abort()
-            print("aborted")
+            board.compute_all_legal_moves()
+            # engine.abort()
             engine.update_board(board)
-            engine.begin_evaluation()
+            engine.evaluate(DEPTH, ct)
 
-        board.compute_all_legal_moves()
+        
         prev_clicked_square = None
         
         _reset_theatrics()

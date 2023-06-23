@@ -23,7 +23,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(self.board, depth, -INF, INF, cancellation_token)
+                curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 if curr_eval > best_eval:
                     best_eval = curr_eval
@@ -35,9 +35,7 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board = self.board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
-                curr_eval = self.minimax(self.board, depth, -INF, INF, cancellation_token)
-
-                # print(curr_eval)
+                curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
                 # print(curr_eval, move, best_eval)
                 if curr_eval < best_eval:
@@ -49,6 +47,7 @@ class PrunedMinimaxEngine(Engine):
     # @lru_cache(None)
     def minimax(self, curr_board: Board, depth: int, alpha: float, beta: float, cancellation_token: CancellationToken):
         """Refer to https://www.youtube.com/watch?v=l-hh51ncgDI&t=531s"""
+        # TODO! FIX THIS SHIT
         if cancellation_token.cancelled:return
         if curr_board.is_checkmated():
             return -INF if curr_board.is_white_move else INF # If white was checkmated black is winning
