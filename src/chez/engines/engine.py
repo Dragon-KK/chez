@@ -46,7 +46,6 @@ class Engine:
         self.begin_evaluation_signal.set()
 
     def _start(self):
-        print(1231)
         return
         self.is_running = True
 

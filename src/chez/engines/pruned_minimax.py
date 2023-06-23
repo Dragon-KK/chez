@@ -37,11 +37,10 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board.compute_all_legal_moves()
                 curr_eval = self.minimax(tmp_board, depth-1, -INF, INF, cancellation_token)
                 if cancellation_token.cancelled:return
-                # print(curr_eval, move, best_eval)
                 if curr_eval < best_eval:
                     best_eval = curr_eval
                     best_move = move
-        print(depth, best_move, best_eval, self.board.legal_moves)
+        print(depth, best_move, best_eval)
 
     
     # @lru_cache(None)
