@@ -26,9 +26,6 @@ engine.start()
 
 board.compute_all_legal_moves()
 
-engine.update_board(board)
-engine.begin_evaluation()
-
 EMPTY_THEATRICS = tuple(Theatrics.none for _ in range(64))
 def _reset_theatrics():
     theatrics.clear()
@@ -52,6 +49,9 @@ chez = ChezGui(
 )
 
 chez.exec()
+
+engine.update_board(board)
+engine.begin_evaluation()
 
 def handle_click(square: Square):
     global prev_clicked_square
@@ -85,6 +85,7 @@ def handle_click(square: Square):
             board.make_move((prev_clicked_square, square, None))
 
             engine.abort()
+            print("aborted")
             engine.update_board(board)
             engine.begin_evaluation()
 

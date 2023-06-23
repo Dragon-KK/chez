@@ -1,6 +1,10 @@
 from abc import abstractclassmethod
-from chez.general.asynch import asyncdef, Signal
+from chez.general.asynch import Signal
 from chez.logic import Board
+from multiprocessing import Process
+
+def run_start(obj):
+    obj._start()
 
 class CancellationToken:
     def __init__(self):
@@ -41,9 +45,9 @@ class Engine:
         self.cancellation_token = CancellationToken()
         self.begin_evaluation_signal.set()
 
-    @asyncdef(name="Engine")
-    def start(self):
-        """Starts the engine"""
+    def _start(self):
+        print(1231)
+        return
         self.is_running = True
 
         while self.is_running:
@@ -53,6 +57,11 @@ class Engine:
             else:
                 self.begin_evaluation_signal.clear()
                 self.begin_evaluation_signal.wait()
+    
+    def start(self):
+        """Starts the engine"""
+        Process(target=run_start, name="Engine", args=(self,), daemon=True).start()
+        
 
     @abstractclassmethod
     def evaluate(self, depth: int,  cancellation_token: CancellationToken):

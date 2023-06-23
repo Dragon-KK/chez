@@ -8,7 +8,7 @@ from functools import lru_cache
 from .engine import Engine, CancellationToken
 from .evaluators import naive_evaluate
 
-INF = float("-inf")
+INF = float("inf")
 
 class PrunedMinimaxEngine(Engine):
     def get_static_evaluation(self, board: Board):
@@ -28,6 +28,7 @@ class PrunedMinimaxEngine(Engine):
                 if curr_eval > best_eval:
                     best_eval = curr_eval
                     best_move = move
+                
         else:
             best_eval = INF
             for move in self.board.legal_moves:
@@ -35,11 +36,14 @@ class PrunedMinimaxEngine(Engine):
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
                 curr_eval = self.minimax(self.board, depth, -INF, INF, cancellation_token)
+
+                # print(curr_eval)
                 if cancellation_token.cancelled:return
+                # print(curr_eval, move, best_eval)
                 if curr_eval < best_eval:
                     best_eval = curr_eval
                     best_move = move
-        print(depth, best_move, best_eval)
+        print(depth, best_move, best_eval, self.board.legal_moves)
 
     
     # @lru_cache(None)
@@ -53,11 +57,12 @@ class PrunedMinimaxEngine(Engine):
 
         if depth == 0:
             return self.get_static_evaluation(curr_board)
+            
 
         if curr_board.is_white_move: # We need to maximize white
             max_eval = -INF
             for move in curr_board.legal_moves:
-                tmp_board = self.board.copy()
+                tmp_board = curr_board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
                 
@@ -72,7 +77,7 @@ class PrunedMinimaxEngine(Engine):
         else: # Maximize black == Minimize white
             min_eval = INF
             for move in curr_board.legal_moves:
-                tmp_board = self.board.copy()
+                tmp_board = curr_board.copy()
                 tmp_board.make_move(move)
                 tmp_board.compute_all_legal_moves()
 
