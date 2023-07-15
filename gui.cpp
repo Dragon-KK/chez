@@ -1,14 +1,16 @@
 #pragma once
 #define GLEW_STATIC
+
 #include <GL/glew.h>
 #include "mingw.thread.h"
 #include "logging.cpp"
 #include <GLFW/glfw3.h>
 #include <string>
 
+#include "imghelper.cpp"
+
 #include "glHelper.cpp"
 #include "shaderHelper.cpp"
-#include "vendors/stb/stb_image.h"
 #include "vendors/glm/glm.hpp"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 #include "vendors/glm/gtc/type_ptr.hpp"
@@ -46,8 +48,12 @@ namespace GUI{
         glfwMakeContextCurrent(GUI::_window);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // Since we only use one _vbo and _ibo, we dont need to rebind it every time
-
+        Texture tex("./assets/wR.png");
+        tex.bind();
+        GUI::_shader.setUniformInt("u_Tex", 0);
         GUI::_shader.setUniformMatrix4f("u_mvp", mvp);
         
         for (int i = 0; i < 64; i++){
