@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+.vscode/*
 # Distribution / packaging
 .Python
 build/
@@ -151,6 +151,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+*.dll
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
