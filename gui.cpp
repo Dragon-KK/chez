@@ -18,8 +18,6 @@ namespace GUI{
     std::thread _thread;
     bool isRunning = false;
 
-    unsigned int _vbo;
-    unsigned int _ibo;
     Shader _shader;
 
     glm::mat4 mvp;
@@ -50,10 +48,10 @@ namespace GUI{
         
         // Since we only use one _vbo and _ibo, we dont need to rebind it every time
 
-        _shader.setUniformMatrix4f("u_mvp", mvp);
+        GUI::_shader.setUniformMatrix4f("u_mvp", mvp);
         
         for (int i = 0; i < 64; i++){
-            _shader.setUniformInt("square", i);
+            GUI::_shader.setUniformInt("square", i);
             // Now we need pieces
             GL::drawSquare();
         }
@@ -65,7 +63,7 @@ namespace GUI{
         glViewport(0, 0, width, height);
         GUI::WindowProperties::size.first = width;
         GUI::WindowProperties::size.second = height;
-        _calculateMVP();
+        GUI::_calculateMVP();
         GUI::render();
     }
 
@@ -80,16 +78,16 @@ namespace GUI{
         glfwSetWindowSizeCallback(GUI::_window, GUI::_windowSizeCallback);
         glfwSwapInterval(1); // Limits the fps at refresh rate of system
 
-        _shader.loadProgramByPath(
+        GUI::_shader.loadProgramByPath(
             GUI::ShaderPaths::vert,
             GUI::ShaderPaths::frag
         );
-        _shader.use();
+        GUI::_shader.use();
         
-        _vbo = GL::createStaticSquareVertexBuffer();
-        _ibo = GL::createStaticSquareIndexBuffer();
+        GL::createStaticSquareVertexBuffer();
+        GL::createStaticSquareIndexBuffer();
 
-        _calculateMVP();
+        GUI::_calculateMVP();
 
         GUI::render();
         while (!glfwWindowShouldClose(GUI::_window)) {
@@ -97,7 +95,7 @@ namespace GUI{
 
             glfwPollEvents();
         }
-        _shader.del();
+        GUI::_shader.del();
         glfwTerminate();
     }
 
