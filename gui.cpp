@@ -56,7 +56,7 @@ namespace GUI{
 
     void terminate(){
         GUI::isRunning = false;
-        clickedSquareSignal.set();
+        GUI::clickedSquareSignal.set();
 
         GL::deleteTextures(GUI::_textures);
         delete &GUI::_shader;
@@ -103,11 +103,11 @@ namespace GUI{
             int xSquare = (xpos - 80) / 70;
             int ySquare = ((ypos - top) / 70);
 
-            clickedSquareQMutex.lock();
-            clickedSquareQ.push(xSquare + 8*(ySquare));            
-            clickedSquareQMutex.unlock();
+            GUI::clickedSquareQMutex.lock();
+            GUI::clickedSquareQ.push(xSquare + 8*(ySquare));            
+            GUI::clickedSquareQMutex.unlock();
 
-            clickedSquareSignal.set();
+            GUI::clickedSquareSignal.set();
         }
     }
 

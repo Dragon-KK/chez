@@ -36,6 +36,7 @@ void handleUserMoves(Board* board, shared_mutex* boardMutex)
         GUI::clickedSquareQMutex.lock();
         if (GUI::clickedSquareQ.empty()){
             GUI::clickedSquareQMutex.unlock();
+
             GUI::clickedSquareSignal.wait(); // Signal is set by GUI, whenever the board is clicked
             GUI::clickedSquareSignal.reset();
             continue;
@@ -43,13 +44,14 @@ void handleUserMoves(Board* board, shared_mutex* boardMutex)
 
         Definitions::Square clickedSquare = GUI::clickedSquareQ.front();
         GUI::clickedSquareQ.pop();
+        
         GUI::clickedSquareQMutex.unlock();
 
         // Handle the click
         boardMutex->lock();
         board->position[clickedSquare] = board->position[rand() % 9];
         boardMutex->unlock();
-        
+
         GUI::requestRender();
     }
 }
