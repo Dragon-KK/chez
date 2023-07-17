@@ -99,4 +99,7 @@ public:
     void del(){
         glDeleteProgram(program);
     }
+    ~Shader(){
+        del();
+    }
 };

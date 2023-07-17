@@ -2,10 +2,10 @@
 
 layout(location=0) out vec4 color;
 
-in vec4 s_color;
-in vec4 pos;
-uniform sampler2D u_Tex;
+in vec4 square_color;
+in vec4 tex_coord;
+uniform sampler2D tex;
 void main(){
-   vec4 texC = texture2D(u_Tex, pos.xy);   
-   color = mix(s_color, texC, texC.a);
+   vec4 texC = texture2D(tex, tex_coord.xy);   
+   color = mix(square_color, texC, texC.a);
 }

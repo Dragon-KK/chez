@@ -5,6 +5,7 @@
 #include "logging.cpp"
 #include <string>
 
+#define TEXTURE_COUNT 14
 #define SQUARE_SIZE 70
 
 namespace GL{
@@ -61,5 +62,28 @@ namespace GL{
 
     void drawSquare(){
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    }
+
+    Texture* createTextures(){
+        return new Texture[TEXTURE_COUNT]{
+            Texture("assets/na.png", 0 ),
+            Texture("assets/na.png", 1 ),
+            Texture("assets/bP.png", 2 ),
+            Texture("assets/wP.png", 3 ),
+            Texture("assets/bN.png", 4 ),
+            Texture("assets/wN.png", 5 ),
+            Texture("assets/bB.png", 6 ),
+            Texture("assets/wB.png", 7 ),
+            Texture("assets/bR.png", 8 ),
+            Texture("assets/wR.png", 9 ),
+            Texture("assets/bQ.png", 10),
+            Texture("assets/wQ.png", 11),
+            Texture("assets/bK.png", 12),
+            Texture("assets/wK.png", 13),            
+        };
+    }
+
+    void deleteTextures(Texture* texture){
+        for (int i=0; i<TEXTURE_COUNT; i++){ delete &texture[i]; }
     }
 }

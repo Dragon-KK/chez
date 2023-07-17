@@ -5,15 +5,47 @@
 #include "engine.cpp"
 #include "board.cpp"
 
+#include "mingw.shared_mutex.h"
+
+
+void handleClick(Square clickedSquare);
+void handleUserMoves(Board board, shared_mutex boardMutex);
+
 using namespace std::chrono_literals;
 int main(){
-    GUI::init();
-    Engine::init();
+    Board board;
+    shared_mutex boardMutex;
+    
+    GUI::init(&board, &boardMutex);
+    Engine::init(&board, &boardMutex);
+    
+    std::this_thread::sleep_for(1s); // Wait for the board and engine to finish initialization
 
-    // std::this_thread::sleep_for(10000ms);
+    handleUserMoves(board, &boardMutex);
 
-    GUI::_thread.join();
+    GUI::terminate();
     Engine::terminate();
     
     return 0;
 };
+
+void handleUserMoves(Board board, shared_mutex* boardMutex)
+{
+    while (GUI::isRunning)
+    {
+        GUI::clickedSquareQMutex.lock();
+        if (GUI::clickedSquareQ.empty()){
+            GUI::clickedSquareQMutex.unlock();
+            GUI::clickedSquareSignal.wait(); // Signal is set by GUI, whenever the board is clicked
+            GUI::clickedSquareSignal.reset();
+            continue;
+        }
+
+        Definitions::Square clickedSquare = GUI::clickedSquareQ.front();
+        GUI::clickedSquareQ.pop();
+        GUI::clickedSquareQMutex.unlock();
+
+        // Handle the click
+        
+    }
+}
