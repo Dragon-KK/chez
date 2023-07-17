@@ -9,7 +9,7 @@
 
 
 void handleClick(Square clickedSquare);
-void handleUserMoves(Board board, shared_mutex boardMutex);
+void handleUserMoves(Board* board, shared_mutex* boardMutex);
 
 using namespace std::chrono_literals;
 int main(){
@@ -21,7 +21,7 @@ int main(){
     
     std::this_thread::sleep_for(1s); // Wait for the board and engine to finish initialization
 
-    handleUserMoves(board, &boardMutex);
+    handleUserMoves(&board, &boardMutex);
 
     GUI::terminate();
     Engine::terminate();
@@ -29,7 +29,7 @@ int main(){
     return 0;
 };
 
-void handleUserMoves(Board board, shared_mutex* boardMutex)
+void handleUserMoves(Board* board, shared_mutex* boardMutex)
 {
     while (GUI::isRunning)
     {
@@ -46,6 +46,10 @@ void handleUserMoves(Board board, shared_mutex* boardMutex)
         GUI::clickedSquareQMutex.unlock();
 
         // Handle the click
+        boardMutex->lock();
+        board->position[clickedSquare] = board->position[rand() % 9];
+        boardMutex->unlock();
         
+        GUI::requestRender();
     }
 }

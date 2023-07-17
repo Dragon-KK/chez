@@ -22,6 +22,8 @@ namespace GUI{
     std::thread _thread;
     bool isRunning = false;
 
+    bool renderIsRequested = false;
+    shared_mutex renderIsRequestedMutex;
     namespace External{
         Board* board;
         std::shared_mutex* boardMutex;
@@ -145,12 +147,23 @@ namespace GUI{
         GUI::render();
         while (!glfwWindowShouldClose(GUI::_window)) {
             if (!GUI::isRunning) glfwSetWindowShouldClose(GUI::_window, GL_TRUE);
-
+            if (GUI::renderIsRequested){
+                GUI::renderIsRequestedMutex.lock();
+                GUI::renderIsRequested = false;
+                GUI::renderIsRequestedMutex.unlock();
+                GUI::render();
+            }
             glfwPollEvents();
         }
         
         glfwTerminate();
         GUI::terminate();
+    }
+
+    void requestRender(){
+        GUI::renderIsRequestedMutex.lock();
+        GUI::renderIsRequested = true;
+        GUI::renderIsRequestedMutex.unlock();
     }
 
     void init(Board* _board, std::shared_mutex* _boardMutex){
