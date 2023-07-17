@@ -3,6 +3,7 @@
 
 namespace Definitions{
     typedef uint8_t Square;
+    Square NULL_SQUARE = 64;
     typedef bool Color;
     typedef uint8_t Piece;
     /**
@@ -43,6 +44,14 @@ namespace Definitions{
     }
 
     Move NULL_MOVE = {
-        0, 0, Pieces::Empty
+        NULL_SQUARE, NULL_SQUARE, Pieces::Empty
     };
+
+    typedef uint8_t Theatric;
+    namespace Theatrics{
+        Theatric none = 0;
+        Theatric highlight = 1; // highlights the square (to show previous move)
+        Theatric marked = 2;    // marks a square (to show valid moves)
+        Theatric target = 3;    // shows that the square was clicked
+    }
 };

@@ -86,4 +86,8 @@ public:
     bool pieceIsOn(Square square){
         return (this->position[square] >> 1 << 1) != Pieces::Empty;
     }
+
+    bool pieceColorIsCorrect(Square square){
+        return pieceIsOn(square) && (getColorOn(square) == turn);
+    }
 };

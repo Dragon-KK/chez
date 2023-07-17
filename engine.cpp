@@ -14,10 +14,7 @@ namespace Engine{
         std::shared_mutex* boardMutex;
     }
 
-    void terminate(){
-        Engine::isRunning = false;
-        Engine::_thread.join();
-    }
+    
 
     void _run(){
         Engine::isRunning = true;
@@ -33,5 +30,10 @@ namespace Engine{
         Engine::External::board = _board;
         Engine::External::boardMutex = _boardMutex;
         Engine::_thread = std::thread(Engine::_run);
+    }
+
+    void terminate(){
+        Engine::isRunning = false;
+        Engine::_thread.join();
     }
 };

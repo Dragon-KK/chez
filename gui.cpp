@@ -27,6 +27,7 @@ namespace GUI{
     namespace External{
         Board* board;
         std::shared_mutex* boardMutex;
+        Definitions::Theatric* theatrics;
     }
 
     std::queue<Definitions::Square> clickedSquareQ;
@@ -54,15 +55,6 @@ namespace GUI{
     
     GLFWwindow* _window;
 
-    void terminate(){
-        GUI::isRunning = false;
-        GUI::clickedSquareSignal.set();
-
-        GL::deleteTextures(GUI::_textures);
-        delete &GUI::_shader;
-        GUI::_thread.join();
-    }
-
     void _calculate_MVP(){
         _mvp = glm::ortho(0.0f, ((float)GUI::WindowProperties::size.first), 0.0f, ((float)GUI::WindowProperties::size.second), -1.0f, 1.0f);
     }
@@ -80,7 +72,7 @@ namespace GUI{
         for (int i = 0; i < 64; i++){
             GUI::_shader.setUniformInt("tex", GUI::External::board->position[i]);
             GUI::_shader.setUniformInt("square", i);
-
+            GUI::_shader.setUniformInt("theatric", GUI::External::theatrics[i]);
             GL::drawSquare();
         }
         GUI::External::boardMutex->unlock_shared();
@@ -156,8 +148,12 @@ namespace GUI{
             glfwPollEvents();
         }
         
+        // Cleanup everything
+        GUI::isRunning = false;
+        delete &GUI::_shader;
+        GL::deleteTextures(GUI::_textures);
+        GUI::clickedSquareSignal.set();
         glfwTerminate();
-        GUI::terminate();
     }
 
     void requestRender(){
@@ -166,9 +162,15 @@ namespace GUI{
         GUI::renderIsRequestedMutex.unlock();
     }
 
-    void init(Board* _board, std::shared_mutex* _boardMutex){
+    void init(Board* _board, std::shared_mutex* _boardMutex, Definitions::Theatric* _theatrics){
         GUI::External::board = _board;
         GUI::External::boardMutex = _boardMutex;
+        GUI::External::theatrics = _theatrics;
         GUI::_thread = std::thread(GUI::_run);
-    }    
+    }
+
+    void terminate(){
+        GUI::isRunning = false;        
+        GUI::_thread.join();
+    }
 };
