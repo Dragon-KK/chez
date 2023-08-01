@@ -19,7 +19,7 @@ void main(){
 	// out pos
 	tex_coord = position / SQUARE_SIZE;
 	// out color
-		
+	
 	if (theatric == 0){ // none
 		square_color = ((div_8%2)^(mod_8%2)) == 0? 
 		vec4(1, 0, 0, 1) : vec4(0, 1, 0, 1);

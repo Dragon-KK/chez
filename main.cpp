@@ -90,8 +90,9 @@ void handleUserMoves(Board* board, shared_mutex* boardMutex, Definitions::Theatr
         
         // prevClickedSquare was a valid piece and now we have to check if the move is possible
         bool found = false;
-        for (auto move: board->legalMoves){
-            if (move.start == prevClickedSquare && move.end == clickedSquare){
+        for(int i=0;i<board->legalMovesLength;i++)
+        {
+            if (board->legalMoves[i].start == prevClickedSquare && board->legalMoves[i].end == clickedSquare){
                 found = true;
                 break;
             }

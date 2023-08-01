@@ -19,8 +19,12 @@ namespace Definitions{
         Square start;
         Square end;
         Piece promotedPiece;
-    };
 
+        bool operator==(const Move& other)
+        {
+            return (this->start == other.start) && (this->end == other.end) && (this->promotedPiece == other.promotedPiece);
+        }
+    };
     namespace Colors{
         Color Black = 0;
         Color White = 1;

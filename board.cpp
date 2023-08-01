@@ -1,7 +1,7 @@
 #pragma once
 #include "definitions.cpp"
-
-#define MAX_LEGAL_MOVES 218
+#define OUT
+#define MAX_LEGAL_MOVES_LENGTH 218
 // https://www.chess.com/forum/view/fun-with-chess/what-chess-position-has-the-most-number-of-possible-moves?page=2
 
 using namespace Definitions;
@@ -11,7 +11,8 @@ public:
      * Array containing all the legal moves for a given state of the board
      * @note This array must be recalculated after every move
     */
-    Move legalMoves[MAX_LEGAL_MOVES];
+    Move legalMoves[MAX_LEGAL_MOVES_LENGTH]{NULL_MOVE};
+    int legalMovesLength = 0;
     /**
      * Keeps track of the previous move made (for en passent checks)
     */
@@ -47,7 +48,7 @@ public:
      * 
      * @warning The function does not check if the square is valid (i.e. in [0..64])
     */
-    ColoredPiece getColoredPieceOn(Square square){
+    ColoredPiece getColoredPieceOn(Square& square){
         return this->position[square];
     }
 
@@ -58,7 +59,7 @@ public:
      * 
      * @warning The function does not check if the square is valid (i.e. in [0..64])
     */
-    Piece getPieceOn(Square square){
+    Piece getPieceOn(Square& square){
         return this->position[square] >> 1 << 1;
     }
 
@@ -72,7 +73,7 @@ public:
      * @warning The function does not check if a piece exists on the square
      * @warning The function does not check if the square is valid (i.e. in [0..64])
     */
-    Color getColorOn(Square square){
+    Color getColorOn(Square& square){
         return this->position[square] & 0b1;
     }
 
@@ -83,11 +84,44 @@ public:
      * 
      * @warning The function does not check if the square is valid (i.e. in [0..64])
     */
-    bool pieceIsOn(Square square){
+    bool pieceIsOn(Square& square){
         return (this->position[square] >> 1 << 1) != Pieces::Empty;
     }
 
-    bool pieceColorIsCorrect(Square square){
+    /**
+     * Checks whether a piece is present on the given square and the color of the piece on it is the same as board.turn
+     * 
+     * @param square The desired square to check
+     * 
+     * @warning The function does not check if the square is valid (i.e. in [0..64])
+    */
+    bool pieceColorIsCorrect(Square& square){
         return pieceIsOn(square) && (getColorOn(square) == turn);
+    }
+
+    void somFunction(OUT bool& isdC){
+        isdC = true;
+
+    }
+
+
+    void recalculateLegalMoves(){
+        for (int i=0; i<legalMovesLength; i++) {legalMoves[i] = NULL_MOVE;}
+        legalMovesLength = 0;
+        
+        // Easily look for valid king moves (same way as we did previously)
+
+        bool isDoubleChecked = false;
+        somFunction(isDoubleChecked);
+        // If we are not checked currently, 
+        //  - Find all the pinned pieces (Store direction of the pin, sliding pieces can only move in direction of pin, knigths cannot move)
+        //  - Now it is assured that all other pieces can move pretty much however they want to (without worrying about checks)
+        //  Peaaaaaaaaace
+
+        // If we are checked:
+        //  - King moves we do the same
+        //  - If we are double checked, only the king can move
+        //  - Otherwise store the direction of the check, our piece has to move to same line (slope same scene)
+        
     }
 };
