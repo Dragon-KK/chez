@@ -4,7 +4,11 @@
 #include "gui.cpp"
 #include "engine.cpp"
 #include "board.cpp"
-#include "mingw.shared_mutex.h"
+#ifdef _WIN32
+    #include "mingw.shared_mutex.h"
+#else
+    #include <shared_mutex>
+#endif
 
 void handleUserMoves(Board* board, shared_mutex* boardMutex, Definitions::Theatric* theatrics);
 

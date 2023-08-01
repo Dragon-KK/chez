@@ -2,8 +2,13 @@
 #define GLEW_STATIC
 
 #include <GL/glew.h>
-#include "mingw.thread.h"
-#include "mingw.shared_mutex.h"
+#ifdef _WIN32
+    #include "mingw.thread.h"
+    #include "mingw.shared_mutex.h"
+#else
+    #include <thread>
+    #include <shared_mutex>
+#endif
 #include "logging.cpp"
 #include <GLFW/glfw3.h>
 #include <string>

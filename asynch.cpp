@@ -1,5 +1,12 @@
-#include "mingw.mutex.h"
-#include "mingw.condition_variable.h"
+#ifdef _WIN32
+    #include "mingw.mutex.h"
+    #include "mingw.condition_variable.h"
+#else
+    #include <mutex>
+    #include <condition_variable>
+#endif
+
+
 
 class Signal{
 

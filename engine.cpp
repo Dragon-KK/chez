@@ -1,6 +1,11 @@
 #pragma once
-#include "mingw.thread.h"
-#include "mingw.shared_mutex.h"
+#ifdef _WIN32
+    #include "mingw.thread.h"
+    #include "mingw.shared_mutex.h"
+#else
+    #include <thread>
+    #include <shared_mutex>
+#endif
 #include <chrono>
 #include <iostream>
 
